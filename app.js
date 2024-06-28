@@ -51,12 +51,7 @@ app.use('/uploads', express.static('uploads', {
   },
 }));
 
-// app.use(cors());
-app.use(cors({
-  origin: '*', // Permitir acesso de qualquer origem (ajuste conforme necessário)
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
-  allowedHeaders: ['Content-Type', 'token'], // Cabeçalhos permitidos
-}));
+
 
 const sseRoutes = require("./routes/sseRoutes");
 app.use("/api", sseRoutes.router);
