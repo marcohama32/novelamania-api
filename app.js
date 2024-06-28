@@ -154,8 +154,17 @@ mongoose.connect(process.env.DATABASE, {})
   });
 
 // Configurar CORS
+const allowedOrigins = ['https://novelamania.vercel.app', 'http://localhost:8081'];
 app.use(cors({
-  origin: 'https://novelamania.vercel.app', // Ajuste conforme necessário
+  origin: function(origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'token'],
 }));
