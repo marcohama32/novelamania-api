@@ -42,16 +42,20 @@ mongoose
     }
   });
 
-// app.use("/uploads", express.static("uploads"));
-// Static files
+// Configurar CORS
+app.use(cors({
+  origin: '*', // Permitir acesso de qualquer origem (ajuste conforme necessário)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+  allowedHeaders: ['Content-Type', 'token'], // Cabeçalhos permitidos
+}));
+
+// Servir arquivos estáticos e definir headers CORS
 app.use('/uploads', express.static('uploads', {
   setHeaders: (res, path, stat) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // Permitir acesso de qualquer origem
-    // Definir outros cabeçalhos conforme necessário
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Definir CORP para cross-origin
   },
 }));
-
-
 
 const sseRoutes = require("./routes/sseRoutes");
 app.use("/api", sseRoutes.router);
