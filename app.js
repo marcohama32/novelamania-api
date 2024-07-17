@@ -118,22 +118,24 @@ const socketIo = require("socket.io");
 const app = express();
 
 // Middleware de compressão Gzip e Brotli
-app.use(compression({
-  level: zlib.constants.Z_DEFAULT_COMPRESSION, // Nível de compressão
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) {
-      // Não comprime se o cabeçalho `x-no-compression` estiver presente
-      return false;
-    }
-    return compression.filter(req, res);
-  },
-  brotli: true,
-  brotliOptions: {
-    params: {
-      [zlib.constants.BROTLI_PARAM_QUALITY]: 6, // Nível de compressão Brotli
-    }
-  }
-}));
+app.use(
+  compression({
+    level: zlib.constants.Z_DEFAULT_COMPRESSION, // Nível de compressão
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) {
+        // Não comprime se o cabeçalho `x-no-compression` estiver presente
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+    brotli: true,
+    brotliOptions: {
+      params: {
+        [zlib.constants.BROTLI_PARAM_QUALITY]: 6, // Nível de compressão Brotli
+      },
+    },
+  })
+);
 
 app.use(morgan("dev"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -157,21 +159,24 @@ mongoose
 
 // Configurar CORS para permitir todas as origens
 app.use(cors());
-app.options('*', cors()); // Habilita CORS pré-vôo para todos os métodos
+app.options("*", cors()); // Habilita CORS pré-vôo para todos os métodos
 
 // Servir arquivos estáticos e definir headers CORS
-app.use('/uploads', express.static('uploads', {
-  setHeaders: (res, path, stat) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  },
-}));
+app.use(
+  "/uploads",
+  express.static("uploads", {
+    setHeaders: (res, path, stat) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    },
+  })
+);
 
 // Middleware para definir cabeçalhos CORS em todas as respostas
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, token');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, token");
   next();
 });
 

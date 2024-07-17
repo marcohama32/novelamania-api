@@ -7,8 +7,9 @@ const asyncHandler = require("../middleware/asyncHandler");
 exports.createSeason = asyncHandler(async (req, res, next) => {
   try {
     const { novel, season_number, title, description, release_year, episodes } = req.body;
+    console.log(req.body)
 
-    const requiredFields = [novel, season_number, title, release_year];
+    const requiredFields = [novel, season_number, release_year];
 
     if (requiredFields.some((field) => !field)) {
       return next(new ErrorResponse("Campos nao podem estar vazios", 400));
@@ -34,7 +35,7 @@ exports.createSeason = asyncHandler(async (req, res, next) => {
       description,
       release_year,
       episodes,
-      user: req.user.id,
+      // user: req.user.id,
     });
 
     // Atualizar a novela para incluir o ID da nova temporada
@@ -72,6 +73,34 @@ exports.findSeasonById = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
+
+// Find season by novel ID
+exports.findSeasonByNovelId = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Find the season by novel ID and populate related fields
+    const season = await Season.find({ novel: id })
+      .populate('novel')
+      .populate('episodes');
+
+    if (!season) {
+      return res.status(404).json({ message: "A Temporada não foi encontrada" });
+    }
+
+    // Get the number of episodes
+    // const episodeCount = season.episodes.length;
+
+    res.status(200).json({
+      success: true,
+      season,
+      // episodeCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 
 // Find all seasons
@@ -146,7 +175,7 @@ exports.editSeason = asyncHandler(async (req, res, next) => {
 
   const { novel, season_number, title, description, release_year, episodes } = req.body;
 
-  const requiredFields = [novel, season_number, title, release_year];
+  const requiredFields = [novel, season_number, release_year];
 
   if (requiredFields.some((field) => !field)) {
     return next(new ErrorResponse("Campos nao podem ser nulos", 400));

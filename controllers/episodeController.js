@@ -28,12 +28,12 @@ exports.createEpisode = asyncHandler(async (req, res, next) => {
     }
 
     // Verificar se já existe um episódio com o mesmo título na mesma temporada
-    const existingSeasonTitle = await Episode.findOne({ season, title });
-    if (existingSeasonTitle) {
-      return next(
-        new ErrorResponse("Episodio com mesmo titulo ja existe", 400)
-      );
-    }
+    // const existingSeasonTitle = await Episode.findOne({ season, title });
+    // if (existingSeasonTitle) {
+    //   return next(
+    //     new ErrorResponse("Episodio com mesmo titulo ja existe", 400)
+    //   );
+    // }
 
     // Criar novo episódio
     const episodio = await Episode.create({
